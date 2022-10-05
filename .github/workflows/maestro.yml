@@ -41,13 +41,9 @@ jobs:
             ./gradlew installDebug
             maestro --platform android test .mobiledev/test.yaml || adb shell screencap -p /data/local/tmp/Screenshot.png; adb pull /data/local/tmp/Screenshot.png Screenshot.png;
 
-      - name: Bundle files
-        if: always()
-        run: find . -type f -name '*Screenshot.png' | zip -@ -r screenshots.zip
-
       - name: Upload screenshot
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: device-screenshot
-          path: screenshots.zip
+          path: ./*Screenshot.png
