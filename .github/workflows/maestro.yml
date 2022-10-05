@@ -63,9 +63,13 @@ jobs:
           ram-size: 4096M
           script: ./gradlew installDebug && cd .mobiledev && maestro test test.yaml || adb shell /system/bin/screencap -p /data/local/tmp/screenshot.png && adb pull /data/local/tmp/screenshot.png screenshot.png;
 
+      - name: Bundle files
+        if: always()
+        run: find . -type f -name 'screenshot.png' | zip -@ -r screenshots.zip
+
       - name: Upload screenshot
         if: always()
         uses: actions/upload-artifact@v2
         with:
           name: device-screenshot
-          path: screenshot.png
+          path: screenshots.zip
