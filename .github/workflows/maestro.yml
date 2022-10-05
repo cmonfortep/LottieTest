@@ -48,7 +48,7 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: ./gradlew installPlayDebug && cd .mobiledev && maestro test test.yaml || adb shell /system/bin/screencap -p /data/local/tmp/screenshot.png && adb pull /data/local/tmp/screenshot.png screenshot.png;
+          script: ./gradlew installDebug && cd .mobiledev && maestro test test.yaml || adb shell /system/bin/screencap -p /data/local/tmp/screenshot.png && adb pull /data/local/tmp/screenshot.png screenshot.png;
 
       - name: Upload screenshot
         if: always()
