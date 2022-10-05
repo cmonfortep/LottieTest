@@ -5,3 +5,4 @@ appId: com.example.lottietest
 - takeScreenshot: LaunchScreenshot
 - assertVisible:
     text: ".*PLAY ANIMATION*"
+- takeScreenshot: Launch2Screenshot
