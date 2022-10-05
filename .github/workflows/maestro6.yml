@@ -1,4 +1,4 @@
-name: only screenshot 29 no override
+name: only screenshot no override root
 
 on:
   push:
@@ -10,6 +10,16 @@ jobs:
   instrumentation_tests:
     runs-on: macos-latest
     name: Instrumentation tests
+    timeout-minutes: 45
+    strategy:
+      # Allow tests to continue on other devices if they fail on one device.
+      fail-fast: false
+      matrix:
+        api-level:
+          - 23
+          - 26
+          - 29
+          - 30
 
     steps:
       - name: Set up JDK 11
@@ -21,12 +31,15 @@ jobs:
       - name: Android checks
         uses: reactiveCircus/android-emulator-runner@v2
         with:
-          api-level: 29
+          api-level: ${{ matrix.api-level }}
           force-avd-creation: false
           arch: x86_64
           target: google_apis
           profile: Nexus 6
-          script: adb shell screencap -p /data/local/tmp/Screenshot.png; adb pull /data/local/tmp/Screenshot.png Screenshot.png;
+          script: |
+            adb root;
+            ./gradlew installDebug;
+            adb shell screencap -p /data/local/tmp/Screenshot.png; adb pull /data/local/tmp/Screenshot.png Screenshot.png;
 
       - name: Upload screenshot
         if: always()
