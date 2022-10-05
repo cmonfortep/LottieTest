@@ -32,8 +32,10 @@ jobs:
       - name: Android checks
         uses: reactiveCircus/android-emulator-runner@v2
         with:
-          api-level: 31
+          api-level: 29
+          force-avd-creation: false
           arch: x86_64
+          target: google_apis
           profile: Nexus 6
           script: |
             ./gradlew installDebug
