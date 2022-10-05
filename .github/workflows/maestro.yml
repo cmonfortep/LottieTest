@@ -31,39 +31,18 @@ jobs:
           brew tap mobile-dev-inc/tap
           brew install maestro
 
-      # Retrieve the cached emulator snapshot.
-      - name: AVD cache
-        uses: actions/cache@v3
-        id: avd-cache
-        with:
-          path: |
-            ~/.android/avd/*
-            ~/.android/adb*
-          key: avd-29
-
-      # Create a new emulator snapshot if it isn't present in the cache.
-      - name: create AVD and generate snapshot for caching
-        if: steps.avd-cache.outputs.cache-hit != 'true'
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 29
-          force-avd-creation: false
-          emulator-options: -skin 2400x1080 -memory 4096 -engine qemu2 -netfast -no-audio -no-snapshot -accel on
-          disable-animations: true
-          script: echo "Generated AVD snapshot for caching."
-
       - name: Android checks
         uses: reactiveCircus/android-emulator-runner@v2
         with:
           api-level: 29
           force-avd-creation: false
-          emulator-options: -skin 2400x1080 -memory 4096 -engine qemu2 -netfast -no-audio -no-snapshot -accel on
+          emulator-options: -skin 1080x1920 -memory 4096 -engine qemu2 -netfast -no-audio -no-snapshot -accel on
           disable-animations: true
-          script: ./gradlew installDebug && cd .mobiledev && maestro --platform android test test.yaml || adb shell /system/bin/screencap -p /data/local/tmp/screenshot.png && adb pull /data/local/tmp/screenshot.png screenshot.png;
+          script: ./gradlew installDebug && cd .mobiledev && maestro --platform android test test.yaml || adb shell /system/bin/screencap -p /data/local/tmp/Screenshot.png && adb pull /data/local/tmp/Screenshot.png Screenshot.png;
 
       - name: Bundle files
         if: always()
-        run: find . -type f -name 'screenshot.png' | zip -@ -r screenshots.zip
+        run: find . -type f -name '*Screenshot.png' | zip -@ -r screenshots.zip
 
       - name: Upload screenshot
         if: always()
