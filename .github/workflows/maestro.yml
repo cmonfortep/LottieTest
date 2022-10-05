@@ -34,10 +34,11 @@ jobs:
       - name: Android checks
         uses: reactiveCircus/android-emulator-runner@v2
         with:
-          api-level: 29
-          force-avd-creation: false
-          emulator-options: -skin 1080x1920 -memory 4096 -engine qemu2 -netfast -no-audio -no-snapshot -accel on
+          api-level: 31
+          arch: x86_64
           disable-animations: true
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-snapshot-save
           script: ./gradlew installDebug && cd .mobiledev && maestro --platform android test test.yaml || adb shell /system/bin/screencap -p /data/local/tmp/Screenshot.png && adb pull /data/local/tmp/Screenshot.png Screenshot.png;
 
       - name: Bundle files
