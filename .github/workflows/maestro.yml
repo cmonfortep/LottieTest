@@ -36,10 +36,14 @@ jobs:
         with:
           api-level: 31
           arch: x86_64
+          profile: Nexus 6
           disable-animations: true
           force-avd-creation: false
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-snapshot-save
-          script: ./gradlew installDebug && cd .mobiledev && maestro --platform android test test.yaml || adb shell /system/bin/screencap -p /data/local/tmp/Screenshot.png && adb pull /data/local/tmp/Screenshot.png Screenshot.png;
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: |
+            ./gradlew installDebug
+            cd .mobiledev
+            maestro --platform android test test.yaml || adb shell /system/bin/screencap -p /data/local/tmp/Screenshot.png && adb pull /data/local/tmp/Screenshot.png Screenshot.png;
 
       - name: Bundle files
         if: always()
