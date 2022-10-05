@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - feature/maestro_to_ci
-  schedule:
-    - cron: '0 4 * * *' # run at 3 AM UTC
   workflow_dispatch:
 
 jobs:
@@ -42,8 +40,7 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           script: |
             ./gradlew installDebug
-            cd .mobiledev
-            maestro --platform android test test.yaml || adb shell /system/bin/screencap -p /data/local/tmp/Screenshot.png && adb pull /data/local/tmp/Screenshot.png Screenshot.png;
+            maestro --platform android test .mobiledev/test.yaml || adb shell /system/bin/screencap -p /data/local/tmp/Screenshot.png && adb pull /data/local/tmp/Screenshot.png Screenshot.png;
 
       - name: Bundle files
         if: always()
