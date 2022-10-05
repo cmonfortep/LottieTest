@@ -47,10 +47,9 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
-          disable-animations: true
           force-avd-creation: false
-          ram-size: 4096M
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          emulator-options: -skin 2400x1080 -memory 4096 -engine qemu2 -netfast -no-audio -no-snapshot -accel on
+          disable-animations: true
           script: echo "Generated AVD snapshot for caching."
 
       - name: Android checks
@@ -58,9 +57,8 @@ jobs:
         with:
           api-level: 29
           force-avd-creation: false
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          emulator-options: -skin 2400x1080 -memory 4096 -engine qemu2 -netfast -no-audio -no-snapshot -accel on
           disable-animations: true
-          ram-size: 4096M
           script: ./gradlew installDebug && cd .mobiledev && maestro --platform android test test.yaml || adb shell /system/bin/screencap -p /data/local/tmp/screenshot.png && adb pull /data/local/tmp/screenshot.png screenshot.png;
 
       - name: Bundle files
