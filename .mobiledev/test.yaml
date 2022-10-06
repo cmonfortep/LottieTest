@@ -1,0 +1,8 @@
+appId: com.example.lottietest
+---
+- launchApp:
+    clearState: true
+- takeScreenshot: LaunchScreenshot
+- assertVisible:
+    text: ".*PLAY ANIMATION*"
+- takeScreenshot: Launch2Screenshot
