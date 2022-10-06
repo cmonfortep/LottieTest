@@ -32,13 +32,15 @@ jobs:
       - name: Android checks
         uses: reactiveCircus/android-emulator-runner@v2
         with:
-          api-level: 28
+          api-level: 26
           force-avd-creation: false
           arch: x86_64
           target: google_apis
           profile: Nexus 6
           script: |
-            ./gradlew installDebug
+            adb root;
+            sleep 5; adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS;
+            ./gradlew installDebug;
             maestro --platform android test .mobiledev/test.yaml || adb shell screencap -p /data/local/tmp/Screenshot.png; adb pull /data/local/tmp/Screenshot.png Screenshot.png;
 
       - name: Upload screenshot
