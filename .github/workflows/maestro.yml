@@ -11,6 +11,7 @@ jobs:
     runs-on: macos-latest
     name: Maestro tests
     strategy:
+      fail-fast: false
       matrix:
         api-level: [ 23, 29, 31 ]
 
