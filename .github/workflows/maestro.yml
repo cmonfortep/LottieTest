@@ -9,7 +9,10 @@ on:
 jobs:
   instrumentation_tests:
     runs-on: macos-latest
-    name: Instrumentation tests
+    name: Maestro tests
+    strategy:
+      matrix:
+        api-level: [ 23, 29, 31 ]
 
     steps:
       - name: Checkout repository
@@ -20,6 +23,7 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
+      - uses: android-actions/setup-android@v2
 
       - name: Gradle cache
         uses: gradle/gradle-build-action@v2
@@ -29,18 +33,45 @@ jobs:
           brew tap mobile-dev-inc/tap
           brew install maestro
 
-      - name: Android checks
+      - name: AVD cache
+        uses: actions/cache@v3
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-${{ matrix.api-level }}
+
+      - name: Build
+        run: ./gradlew assembleDebug
+
+      - name: create AVD and generate snapshot for caching
+        if: steps.avd-cache.outputs.cache-hit != 'true'
         uses: reactiveCircus/android-emulator-runner@v2
         with:
-          api-level: 29
-          force-avd-creation: false
+          api-level: ${{ matrix.api-level }}
           arch: x86_64
           target: google_apis
-          profile: Nexus 6
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: false
+          script: echo "Generated AVD snapshot for caching."
+
+      - name: run tests
+        uses: reactiveCircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          arch: x86_64
+          target: google_apis
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-snapshot-save
+          disable-animations: true
           script: |
             sleep 5; adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS;
-            ./gradlew installDebug;
-            maestro --platform android test .mobiledev/test.yaml || adb shell screencap -p /data/local/tmp/Screenshot.png; adb pull /data/local/tmp/Screenshot.png Screenshot.png;
+            ./gradlew installDebug || touch sorry_but_tests_are_failing
+            maestro --platform android test .mobiledev/test.yaml || touch sorry_but_tests_are_failing
+            adb shell screencap -p /data/local/tmp/Screenshot.png; adb pull /data/local/tmp/Screenshot.png Screenshot.png;
+            test ! -f sorry_but_tests_are_failing
 
       - name: Upload screenshot
         if: always()
