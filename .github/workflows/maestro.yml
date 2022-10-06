@@ -38,7 +38,6 @@ jobs:
           target: google_apis
           profile: Nexus 6
           script: |
-            adb root;
             sleep 5; adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS;
             ./gradlew installDebug;
             maestro --platform android test .mobiledev/test.yaml || adb shell screencap -p /data/local/tmp/Screenshot.png; adb pull /data/local/tmp/Screenshot.png Screenshot.png;
